@@ -1,7 +1,6 @@
 ---
 title: "Python Import"
 date: 2019-03-07T20:25:41+08:00
-tags: python
 draft: false
 ---
 
