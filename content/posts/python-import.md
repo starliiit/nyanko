@@ -1,22 +1,29 @@
 ---
 title: "Python Import"
 date: 2019-03-07T20:25:41+08:00
+tags: python
 draft: false
 ---
 
-## 搜索顺序
+## 1. 模块搜索
 
-1. 搜索内建模块：`sys.builtin_module_names`
+搜索的目标：
+
+- 名为 `<module-name>.py` 的文件
+- 或名为 `<module-name>` 的文件夹
+
+在下面的路径列表中进行搜索：
+
+1. `sys.builtin_module_names`
 2. `sys.path`
 
 注意内建模块与标准库是有区别的，内建模块直接在编译时链接在解释器中，使用 `sys.builtin_module_names` 表示，优先搜索。
-另一些标准库模块在 `sys.path` 包含的目录中。因此可以在当前目录创建同名模块覆盖掉这些非内建标准库模块。
+
+另一些标准库模块在 `sys.path` 包含的目录中。因此可以在当前目录创建同名模块，覆盖掉这些非内建标准库模块。
 
 ## `sys.path`
 
-在 import 一个 module `fuck` 时，会在 `sys.path` 中搜索一个名为 `fuck.py` 的文件，或者名为 `fuck` 的文件夹。
-
-`sys.path`在解释器启动时被初始化，内容为：
+`sys.path`在解释器启动时被初始化，具体内容与解释器的启动方式有关：
 
 - The directory containing the input script (or the current directory when no file is specified).
 - `PYTHONPATH` (a list of directory names, with the same syntax as the shell variable PATH).
@@ -51,21 +58,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 '/Users/sl/.pyenv/versions/3.7.0/lib/python3.7/site-packages']
 ```
 
-**当执行一个脚本时，如果不使用 `python -m`，那么 import 系统不在乎「当前工作目录」，只在乎被执行脚本所在的目录。**
-
-执行示例：
-
-```
-# sl @ r3 in ~/slnyanyanya/python-import/test [11:18:28]
-$ python packA/subA/sa1.py
-['/Users/sl/slnyanyanya/python-import/test/packA/subA', 
-'/Users/sl/.pyenv/versions/3.7.0/lib/python37.zip', 
-'/Users/sl/.pyenv/versions/3.7.0/lib/python3.7', 
-'/Users/sl/.pyenv/versions/3.7.0/lib/python3.7/lib-dynload', 
-'/Users/sl/.pyenv/versions/3.7.0/lib/python3.7/site-packages']
-```
-
-**在解释器启动之后，`sys.path` 可以被所有模块共享。**
+## 2. 关于 `sys.path` 需要注意的点
 
 目录结构如下：
 
@@ -86,6 +79,24 @@ $ tree .
 └── start.py
 ```
 
+**1. 当执行一个脚本时，如果不使用 `python -m`，那么 import 系统不在乎「当前工作目录」，只在乎被执行脚本所在的目录。**
+
+执行示例：
+
+```
+# sl @ r3 in ~/slnyanyanya/python-import/test [11:18:28]
+$ python packA/subA/sa1.py
+['/Users/sl/slnyanyanya/python-import/test/packA/subA', 
+'/Users/sl/.pyenv/versions/3.7.0/lib/python37.zip', 
+'/Users/sl/.pyenv/versions/3.7.0/lib/python3.7', 
+'/Users/sl/.pyenv/versions/3.7.0/lib/python3.7/lib-dynload', 
+'/Users/sl/.pyenv/versions/3.7.0/lib/python3.7/site-packages']
+```
+
+在 test 目录下执行 test/packA/subA/sa1.py，`sys.path` 第一项是 sa1.py 所在的路径。
+
+**2. 在解释器启动之后，`sys.path` 可以被所有模块共享。**
+
 如果我们使用 `python start.py` 运行项目根目录的脚本，那么其他所有 package 中的模块，在 import 其他模块时，可视范围都和 start.py 相同。
 
 例如我们可以在 `packA/subA/sa2.py` 中直接 import `other.py` 中的变量。
@@ -105,13 +116,15 @@ print(cap_name)
 
 无论我们在哪个工作目录执行 `start.py`，都能够成功输出 `'GG'`。
 
-## package
+## 3. package
 
 在 python3 中，每个文件夹都被视为 package，无论其中是否含有 `__init__.py`。
 
 当一个 package 首次被 import 时，解释器尝试执行文件夹中的 `__init__.py`，如果该文件存在的话。并且 `__init__.py` 中的 name 位于 package 的 namespace 中。
 
-需要注意的是：**当解释器执行某个 python 脚本时（无论是否使用 `python -m`），该脚本所在的目录并不被视为一个 package，因此不会执行同目录下的 `__init__.py`。**
+需要注意的是：
+
+**1. 当解释器执行某个 python 脚本时（无论是否使用 `python -m`），该脚本所在的目录并不被视为一个 package，因此不会执行同目录下的 `__init__.py`。**
 
 例如：
 
@@ -127,13 +140,15 @@ import packB
 name = 'gg'
 ```
 
-无论我们在哪个工作目录执行 `b1.py`，输出:
+执行 `b1.py`，输出:
 
 ```
 # sl @ r3 in ~/slnyanyanya/python-import/test [11:41:03]
 $ python packB/b1.py
 hello from b1
 ```
+
+`packB/__init__.py` 中的代码并没有被调用，因为我们直接执行 b1.py。
 
 执行 `other.py`，输出：
 
@@ -143,23 +158,25 @@ $ python other.py
 __init__ of packB!
 ```
 
-**解释器在执行某个脚本时，该脚本被视为 top-level module，无法从 top-level module 的 parent directory 进行相对导入。**
+`packB/__init__.py` 中的代码被调用，因为我们 import 了 packB。
+
+**2. 解释器在执行某个脚本时，该脚本被视为 top-level module，无法从 top-level module 的 parent directory 进行相对导入。**
 
 因为 `sys.path` 只会把被执行脚本所在目录加入 `sys.path`，无法访问被执行脚本所在目录父目录的内容。
 
 如果想要在被执行脚本中 import 父目录的内容，只能修改 `PYTHONPATH` 或者 `sys.path`。
 
-## 实践
+## 4. 实践
 
-由于 `sys.path` 的第一项由被执行脚本所在位置决定，因此 import 系统搜索路径与被 import 模块和被执行脚本之间的位置关系有关。
+由于 `sys.path` 的第一项由被执行脚本所在位置决定，因此 import 系统搜索路径与__被 import 模块和被执行脚本之间的位置关系__有关。
 
 如果我们的项目是作为一整个 project 来运行，能够确定每次执行的是哪个脚本，那么被 import 模块与实际执行脚本之间的位置关系就是固定不变的。
 例如我们的可执行脚本在项目根目录（如上面的 start.py），那么我们在写 `import` 语句时就能默认项目根目录位于 `sys.path` 之中，使用 `from packA.subA import sa1` 这样的语句进行 import。
 
-如果我们的项目是作为一个 package 用于被他人 import，那么我们就需要注意我们的项目与他人代码之间的位置关系。
+如果我们的项目是作为一个 package 用于被他人 import，那么我们就需要注意我们的项目与他人代码之间的位置关系。如果位置不对，我们写好的 import 语句就会失效。
 
-- 最好的情况是 package 文件夹被安装在常用目录，比如 site-packages 中。（通过 `pip install`，这也是编写 package 最推荐的做法）假设 package 名字为 X，此时 package X 内部的 `import` 语句就可以写成 `from X.xxx import yyy`。
-- package X 作为一个文件夹放在与被执行脚本相同的目录中。此时 package X 内部的 `import` 语句就可以写成 `from X.xxx import yyy`。
+- 最好的情况是 package 文件夹被安装在常用目录，比如 site-packages 中。（通过 `pip install`，这也是编写 package 推荐的做法）假设 package 名字为 X，此时 package X 内部的 `import` 语句就可以写成 `from X.packA import a1`。
+- package X 作为一个文件夹放在与被执行脚本相同的目录中。此时被执行脚本可以「直接看见」 package X 文件夹。package X 内部的 `import` 语句和上面一样，也可以写成 `from X.packA import a1`。
 - 最麻烦的情况是：package X 不在常用目录，和可执行脚本也不在同一目录。此时需要修改 `PYTHONPATH` 或者 `sys.path`。
 
 最后一种情况的例子：
@@ -183,4 +200,16 @@ tests/test_advanced.py
 测试脚本是可执行脚本，但是位于 `tests` 文件夹。
 推荐的解决方案是：在测试脚本中显式地修改 `sys.path`。
 
-ref: [The Definitive Guide to Python import Statements](https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html)
+## 5. conclusion
+
+综上所述，我们在编写 import 语句时，最好从整个 package 的根目录开始 import。
+
+例如第 2 节提到的目录结构中，如果packB/b1.py 要引用 packA/subA/sa2.py，就应该写成:
+
+```
+from packA.subA.sa2 import name
+```
+
+在测试时，在测试脚本中手动修改 `sys.path`，把 package 根目录的路径加入其中，防止模块搜索不到。
+
+Reference: [The Definitive Guide to Python import Statements](https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html)
