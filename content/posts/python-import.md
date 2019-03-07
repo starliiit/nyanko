@@ -181,5 +181,6 @@ tests/test_advanced.py
 ```
 
 测试脚本是可执行脚本，但是位于 `tests` 文件夹。
-
 推荐的解决方案是：在测试脚本中显式地修改 `sys.path`。
+
+ref: [The Definitive Guide to Python import Statements](https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html)
