@@ -20,7 +20,7 @@ draft: false
 
 另一些标准库模块在 `sys.path` 包含的目录中。因此可以在当前目录创建同名模块，覆盖掉这些非内建标准库模块。
 
-## `sys.path`
+## 2. `sys.path`
 
 `sys.path`在解释器启动时被初始化，具体内容与解释器的启动方式有关：
 
@@ -57,7 +57,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 '/Users/sl/.pyenv/versions/3.7.0/lib/python3.7/site-packages']
 ```
 
-## 2. 关于 `sys.path` 需要注意的点
+## 3. 关于 `sys.path` 需要注意的点
 
 目录结构如下：
 
@@ -115,7 +115,7 @@ print(cap_name)
 
 无论我们在哪个工作目录执行 `start.py`，都能够成功输出 `'GG'`。
 
-## 3. package
+## 4. package
 
 在 python3 中，每个文件夹都被视为 package，无论其中是否含有 `__init__.py`。
 
@@ -165,7 +165,7 @@ __init__ of packB!
 
 如果想要在被执行脚本中 import 父目录的内容，只能修改 `PYTHONPATH` 或者 `sys.path`。
 
-## 4. 实践
+## 5. 实践
 
 由于 `sys.path` 的第一项由被执行脚本所在位置决定，因此 import 系统搜索路径与__被 import 模块和被执行脚本之间的位置关系__有关。
 
@@ -199,7 +199,7 @@ tests/test_advanced.py
 测试脚本是可执行脚本，但是位于 `tests` 文件夹。
 推荐的解决方案是：在测试脚本中显式地修改 `sys.path`。
 
-## 5. conclusion
+## 6. conclusion
 
 综上所述，我们在编写 import 语句时，最好从整个 package 的根目录开始 import。
 
