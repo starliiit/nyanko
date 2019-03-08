@@ -42,3 +42,5 @@ remote: Resolving deltas: 100% (7/7), completed with 5 local objects.
 To github.com:starliiit/starliiit.github.io.git
  + 88de0b3...16648de 16648de6c9cda050cb4e84001da9ca071f41f309 -> master (forced update)
 ```
+
+Reference: https://stackoverflow.com/questions/5816688/resetting-remote-to-a-certain-commit
