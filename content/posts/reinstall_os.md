@@ -15,14 +15,27 @@ Reference：[A simpler way to manage your dotfiles ](https://www.anand-iyer.com/
 ### 操作
 
 1. 使用一个独立的文件夹 X 保存所有 dotfile。
+
 2. 使用 `git init --bare X` 将 X 建立为一个「裸库」 。
+
 3. 修改 `.zshrc`，使用
- 
-	```
-	alias dotfiles='/usr/bin/git --git-dir=$HOME/X/ --work-tree=$HOME'
-	```
-	添加一个 `dotfiles` 命令。
+
+  ```
+  alias dotfiles='/usr/bin/git --git-dir=$HOME/X/ --work-tree=$HOME'
+  ```
+  添加一个 `dotfiles` 命令。
+
 4. 之后就可以使用 `dotfiles add, dotfiles commit, dotfiles push` 来对 dotfile 进行管理了。
+
+### 恢复
+
+在新机器上，使用 `git —separate-git-dir` 选项进行 clone:
+
+```
+git clone --separate-git-dir=$HOME/.dotfiles https://github.com/starliiit/.dotfiles.git ~
+```
+
+如果有程序在 clone 之前创建了同名的配置文件，clone 会失效。可以先 clone 到一个单独的文件夹然后 mv 过去。
 
 ### 原理
 
