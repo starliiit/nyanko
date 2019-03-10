@@ -1,7 +1,9 @@
 ---
 title: "Git Remote Force Update"
 date: 2019-03-09T05:41:02+08:00
+tags: ["git", "tools"]
 draft: false
+summary: "git 覆盖已提交的分支"
 ---
 
 ## 场景

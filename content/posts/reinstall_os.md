@@ -1,6 +1,7 @@
 ---
 title: "折腾系统配置"
 date: 2019-03-09T05:14:43+08:00
+tags: ["tools"]
 draft: false
 ---
 
