@@ -124,4 +124,12 @@ relative/path/to/file.txt
 
 Reference: [Synchronizing folders with rsync](https://www.jveweb.net/en/archives/2010/11/synchronizing-folders-with-rsync.html)
 
+### 配置免密码同步
 
+把本机的 ssh key 拷贝到远端服务器，实现免密码登录
+
+`ssh-copy-id -i ~/.ssh/id_rsa.pub username@192.168.200.10`
+
+免密码登录能成功之后 rsync 就不用输密码了。
+
+Reference: https://superuser.com/questions/555799/how-to-setup-rsync-without-password-with-ssh-on-unix-linux
